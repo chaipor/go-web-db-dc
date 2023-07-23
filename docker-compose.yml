@@ -1,0 +1,36 @@
+version: '3'
+services:
+  go-web:
+    container_name: go-web
+    image: golang:1.20.5-alpine3.18
+    working_dir: /usr/src/app
+    command: ./web-app
+    volumes:
+      - ./go-web/app:/usr/src/app
+    depends_on: 
+      - pg-db
+    restart: always
+    ports:
+      - 80:8000
+    networks:
+      - internal
+
+  pg-db:
+    container_name: pg-db
+    image: postgres:alpine3.18
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mytestdb
+    ports:
+      - 5432:5432
+    volumes:
+          - ./postgres-data:/var/lib/postgresql/data
+          - ./postgres-init-sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    networks:
+      - internal
+
+networks:
+    internal:
+      driver: bridge

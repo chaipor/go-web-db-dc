@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>This page demos how to query data from PostgreSQL and parse them into an html file 'alldata.html'</title>
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+
+		table, th, td {
+			border: 1px solid black;
+			padding: 5px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Table: All student research data</h1>
+	<table>
+		<tr>
+			<th>Item</th>
+			<th>Name</th>
+			<th>Nickname</th>
+			<th>Research</th>
+			<th>Edit</th>
+		</tr>
+		{{range .}}
+		<tr>
+			<td>{{.Item}}</td>
+			<td>{{.Name}}</td>
+			<td>{{.Nickname}}</td>
+			<td>{{.Research}}</td>
+			<td><a href='userdata/{{.EditLink}}'>Click to edit</a></td>
+		</tr>
+		{{else}}
+		<tr>
+			<td>-</td>
+			<td>-</td>
+			<td>-</td>
+			<td>-</td>
+			<td>-</td>
+		</tr>
+		{{end}}
+	</table>
+	<h2><a href="/ShowInsert">Add new data</a><br>
+	<h2><a href="/">Back to home page</a></h2>
+</body>
+</html>
+

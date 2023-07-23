@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+   <head>
+		<title>{{.Title}}</title>
+		<script>
+        	function ConfirmAddData(message) {
+				let text = message +"\nDo you want to add new data?\nOK => Add new data.\nCancel => Close and back to show all data.";
+  				if (confirm(text) == true) {
+    				document.getElementById("name").value = "";
+					document.getElementById("nickname").value = "";
+					document.getElementById("research").value = "";
+					document.getElementById("name").focus();
+  				} else {
+    				window.location.href="/alldata";
+  				}
+           	}
+			function ConfirmEditData(message) {
+				let text = message +"\nDo you want to edit this data again?\nOK => Edit data again.\nCancel => Close and back to show all data.";
+  				if (confirm(text) == true) {
+					document.getElementById("nickname").focus();
+  				} else {
+    				window.location.href="/alldata";
+  				}
+           	}
+			function ConfirmDelData(message) {
+				document.getElementById("form_input").style.display = "none";
+				alert(message);
+				window.location.href="/alldata";
+           	}
+        	function HandleSubmitForm(event) {
+        		event.preventDefault();
+				var formAction = event.target.getAttribute("action");
+  				var activeElementAction = document.activeElement.getAttribute("formaction");
+  				var action = activeElementAction || formAction;
+              	var form = event.target;
+              	var formData = new FormData(form);
+              	var xhr = new XMLHttpRequest();
+              	xhr.open("POST", action, true);
+              	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              	xhr.onreadystatechange = function() {
+					if (xhr.readyState === XMLHttpRequest.DONE) {
+						if (xhr.status === 200) {
+							if (action === "/InsertUserData"){ConfirmAddData(xhr.response);}
+							else if (action === "/UpdateUserData"){ConfirmEditData(xhr.response);}
+							else if (action === "/DelUserData"){ConfirmDelData(xhr.response);}
+						} else if (xhr.status === 400) {
+							if (action === "/InsertUserData"){
+								alert(xhr.response);
+								document.getElementById("name").focus();
+							} else if (action === "/UpdateUserData"){
+								alert(xhr.response);
+								document.getElementById("nickname").focus();
+							} else if (action === "/DelUserData"){
+								alert(xhr.response);
+							}
+						} else {
+							console.error("Request failed with status:", xhr.status);
+						}
+					}
+              	}; 
+            	xhr.send(new URLSearchParams(formData)); 
+           	}
+   		</script>
+		<style>
+	   		.button {
+				border-style: solid;
+				border-color: #777777;
+				border-radius: 4px;
+  				color: white;
+	  			padding: 7px 25px;
+  				text-align: center;
+	  			text-decoration: none;
+		  		display: inline;
+  				font-size: 14px;
+				font-weight: bold;
+  				margin: 4px 2px;
+		  		cursor: pointer;
+  				background-color: #777777;
+	   		}
+			.button:hover{
+				background-color: #351aad;
+				border-color: #351aad;
+			}
+		</style>
+   	</head>
+   	<body>
+		<h1>{{.Title}}</h1>
+		<div id="form_input">
+	   		<p>Please specify research information in the following form:</p>
+	   		<form id="AddDataForm" method="POST" action="{{.FormAction}}">  
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" size="30" maxlength="30" value="{{.InputNameValue}}" required {{.InputNameAttr}}><br><br>
+				<label for="nickname">Nickname:</label>
+				<input type="text" id="nickname" name="nickname" size="20" maxlength="20"  value="{{.InputNicknameValue}}" required><br><br>
+				<label for="research">Research:</label><br>
+				<input type="text" id="research" name="research" size="50" maxlength="50" value="{{.InputResearchValue}}" required><br><br>
+				<div id="divSaveButton" style="display:inline";>
+					<input id="button_Save" type="submit" value="Save" class="button">
+				</div>
+				<div id="div_Delete" style="display:{{.DisplayDelButton}};">
+					<input id="button_Delete" type="submit" formaction="/DelUserData" value="Delete" class="button">
+				</div>
+				<div style="display:inline";>
+					<input onclick="window.location.href='/alldata';" type="submit" value="Close" formaction="/alldata" formmethod="get" class="button">
+				</div>
+	   		</form>
+		</div>
+    	<script>
+        	document.getElementById("AddDataForm").addEventListener("submit", HandleSubmitForm);
+    	</script>
+   	</body>
+</html>
+
