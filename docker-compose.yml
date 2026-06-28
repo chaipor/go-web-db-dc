@@ -13,7 +13,8 @@ services:
     ports:
       - 80:8000
     networks:
-      - internal
+      - front_net
+      #- back_net
 
   pg-db:
     container_name: pg-db
@@ -29,8 +30,12 @@ services:
           - ./postgres-data:/var/lib/postgresql/data
           - ./postgres-init-sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
-      - internal
-
+      - front_net
+      #- back_net
 networks:
-    internal:
+    front_net:
       driver: bridge
+    # back_net:
+      # driver: bridge
+      # internal: True
+
